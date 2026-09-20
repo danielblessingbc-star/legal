@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Authorization callback</title>
+  <style>
+    body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; max-width: 720px; margin: 2rem auto; padding: 0 1rem; line-height: 1.6; color: #222; }
+    h1 { font-size: 1.5rem; }
+    code { display: block; padding: .6rem .8rem; background: #f3f3f3; border-radius: 6px; word-break: break-all; margin: .3rem 0 .8rem; }
+    button { padding: .35rem .8rem; cursor: pointer; }
+    .err { color: #b00020; }
+  </style>
+</head>
+<body>
+  <h1>Authorization callback</h1>
+  <div id="out"></div>
+  <script>
+    (function () {
+      var p = new URLSearchParams(window.location.search);
+      var out = document.getElementById("out");
+      var fields = ["code", "state", "error", "error_description"];
+      var found = false;
+      fields.forEach(function (k) {
+        var v = p.get(k);
+        if (!v) return;
+        found = true;
+        var label = document.createElement("strong");
+        label.textContent = k + ":";
+        var box = document.createElement("code");
+        box.textContent = v;
+        if (k.indexOf("error") === 0) box.className = "err";
+        var btn = document.createElement("button");
+        btn.textContent = "Copy " + k;
+        btn.onclick = function () {
+          navigator.clipboard.writeText(v).then(function () { btn.textContent = "Copied"; });
+        };
+        out.appendChild(label);
+        out.appendChild(box);
+        out.appendChild(btn);
+      });
+      if (!found) {
+        out.textContent = "No authorization parameters found in the URL.";
+      }
+    })();
+  </script>
+</body>
+</html>
